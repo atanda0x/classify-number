@@ -20,7 +20,10 @@ This API classifies numbers by determining whether they are prime, perfect, Arms
     "digit_sum": 11,
     "fun_fact": "371 is a boring number."
 }
+```
 
+### Example Bad Request (400)
+```json
 {
   "number": "alphabet",
   "error": true
