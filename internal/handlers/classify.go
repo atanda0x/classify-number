@@ -33,6 +33,7 @@ func Classify(w http.ResponseWriter, r *http.Request) {
 			Number: "",
 			Error:  true,
 		})
+
 	}
 
 	num, err := strconv.Atoi(numberParam)
@@ -42,6 +43,7 @@ func Classify(w http.ResponseWriter, r *http.Request) {
 			Number: numberParam,
 			Error:  true,
 		})
+
 	}
 
 	properties := []string{}
@@ -53,10 +55,9 @@ func Classify(w http.ResponseWriter, r *http.Request) {
 	} else {
 		properties = append(properties, "odd")
 	}
-
 	funFactText, err := funfact.GetFunFact(num)
-	if err != nil {
-		funFactText = fmt.Sprintf("No fun fact available for %d", num)
+	if err != nil || funFactText == "" {
+		funFactText = fmt.Sprintf("%d is a number for which we're missing a fact (submit one to numbersapi at google mail!).", num)
 	}
 
 	res := ApiResponse{
