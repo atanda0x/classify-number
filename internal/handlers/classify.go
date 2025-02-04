@@ -33,7 +33,7 @@ func Classify(w http.ResponseWriter, r *http.Request) {
 			Number: "",
 			Error:  true,
 		})
-
+		return
 	}
 
 	num, err := strconv.Atoi(numberParam)
@@ -43,7 +43,7 @@ func Classify(w http.ResponseWriter, r *http.Request) {
 			Number: numberParam,
 			Error:  true,
 		})
-
+		return
 	}
 
 	properties := []string{}

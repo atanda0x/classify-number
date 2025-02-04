@@ -25,3 +25,4 @@ This API classifies numbers by determining whether they are prime, perfect, Arms
   "number": "alphabet",
   "error": true
 }
+```
