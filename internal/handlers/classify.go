@@ -6,6 +6,9 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+
+	"github.com/atanda0x/classify-number/internal/funfact"
+	"github.com/atanda0x/classify-number/internal/mathutils"
 )
 
 type ApiResponse struct {
