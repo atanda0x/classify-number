@@ -21,28 +21,21 @@ type ApiResponse struct {
 }
 
 type APIError struct {
-	Number string `json:"number"`
-	Error  bool   `json:"error"`
+	Number  string `json:"number"`
+	Error   bool   `json:"error"`
+	Message string `json:"message,omitempty"`
 }
 
 func Classify(w http.ResponseWriter, r *http.Request) {
 	numberParam := r.URL.Query().Get("number")
 	if numberParam == "" {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(APIError{
-			Number: "",
-			Error:  true,
-		})
+		http.Error(w, `{"number": "", "error": true, "message": "Missing number parameter"}`, http.StatusBadRequest)
 		return
 	}
 
 	num, err := strconv.Atoi(numberParam)
 	if err != nil {
-		w.WriteHeader(http.StatusBadRequest)
-		json.NewEncoder(w).Encode(APIError{
-			Number: numberParam,
-			Error:  true,
-		})
+		http.Error(w, fmt.Sprintf(`{"number": "%s", "error": true, "message": "Invalid number format"}`, numberParam), http.StatusBadRequest)
 		return
 	}
 
@@ -55,12 +48,13 @@ func Classify(w http.ResponseWriter, r *http.Request) {
 	} else {
 		properties = append(properties, "odd")
 	}
+
 	funFactText, err := funfact.GetFunFact(num)
 	if err != nil || funFactText == "" {
 		funFactText = fmt.Sprintf("%d is a number for which we're missing a fact (submit one to numbersapi at google mail!).", num)
 	}
 
-	res := ApiResponse{
+	response := ApiResponse{
 		Number:     num,
 		IsPrime:    mathutils.IsPrime(num),
 		IsPerfect:  mathutils.IsPerfect(num),
@@ -71,9 +65,8 @@ func Classify(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Access-Control-Allow-Origin", "*")
 	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	if err := json.NewEncoder(w).Encode(res); err != nil {
+	if err := json.NewEncoder(w).Encode(response); err != nil {
 		log.Printf("Error encoding JSON response: %v", err)
+		http.Error(w, `{"error": true, "message": "Internal Server Error"}`, http.StatusInternalServerError)
 	}
-
 }
